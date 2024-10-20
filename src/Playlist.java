@@ -43,8 +43,8 @@ public class Playlist {
     public static void main(String[] args) {
         Playlist playlist = new Playlist();
         playlist.addSong("Dissolve");
-        playlist.addSong("Song 2");
-        playlist.addSong("Song 3");
+        playlist.addSong("Magadir");
+        playlist.addSong("Memories");
 
         playlist.displayPlaylist();
     }
