@@ -1,66 +1,87 @@
-import java.util.Stack;
-
+import java.util.ArrayList;
+import java.util.Scanner;
 public class TextEditor {
-    private String currentText;
-    private Stack<String> undoStack;
-    private Stack<String> redoStack;
+    private ArrayList<String> history;
+    private int currentIndex;
 
     public TextEditor() {
-        this.currentText = "";
-        this.undoStack = new Stack<>();
-        this.redoStack = new Stack<>();
+        this.history = new ArrayList<>();
+        this.currentIndex = -1;
+    }
+    public void write(String text) {
+        if (currentIndex < history.size() - 1) {
+            history.subList(currentIndex + 1, history.size()).clear();
+        }
+
+        if (currentIndex == -1) {
+            history.add(text);
+        } else {
+            history.add(currentIndex + 1, text);
+        }
+        currentIndex++;
     }
 
     public void show() {
-        System.out.println(currentText);
+        if (currentIndex == -1) {
+            System.out.println("Tidak ada teks.");
+        } else {
+            System.out.println(history.get(currentIndex));
+        }
     }
 
     public void undo() {
-        if (!undoStack.isEmpty()) {
-            redoStack.push(currentText);
-            currentText = undoStack.pop();
+        if (currentIndex > 0) {
+            currentIndex--;
+            System.out.println("Undo berhasil. Isi teks sekarang: " + history.get(currentIndex));
         } else {
-            System.out.println("Tidak ada aksi undo yang dapat dilakukan.");
+            System.out.println("Tidak bisa undo lagi.");
         }
     }
 
     public void redo() {
-        if (!redoStack.isEmpty()) {
-            undoStack.push(currentText);
-            currentText = redoStack.pop();
+        if (currentIndex < history.size() - 1) {
+            currentIndex++;
+            System.out.println("Redo berhasil. Isi teks sekarang: " + history.get(currentIndex));
         } else {
-            System.out.println("Tidak ada aksi redo yang dapat dilakukan.");
+            System.out.println("Tidak bisa redo lagi.");
         }
     }
-
-    public void write(String text) {
-        undoStack.push(currentText);
-        currentText += text;
-        redoStack.clear();
-    }
-
     public static void main(String[] args) {
-        TextEditor editor = new TextEditor();
+        TextEditor textEditor = new TextEditor();
+        Scanner scanner = new Scanner(System.in);
 
-        editor.write("Hello, ");
-        editor.show();
+        while (true) {
+            System.out.println("Pilih fungsi:");
+            System.out.println("1. Show");
+            System.out.println("2. Undo");
+            System.out.println("3. Redo");
+            System.out.println("4. Write");
+            System.out.println("5. Keluar");
 
-        editor.write("world!");
-        editor.show();
+            int pilihan = scanner.nextInt();
+            scanner.nextLine();
 
-        editor.undo();
-        editor.show();
-
-        editor.redo();
-        editor.show();
-
-        editor.write(" How are you?");
-        editor.show();
-
-        editor.undo();
-        editor.show();
-
-        editor.write(" Everyone!");
-        editor.show();
+            switch (pilihan) {
+                case 1:
+                    textEditor.show();
+                    break;
+                case 2:
+                    textEditor.undo();
+                    break;
+                case 3:
+                    textEditor.redo();
+                    break;
+                case 4:
+                    System.out.print("Masukkan teks: ");
+                    String text = scanner.nextLine();
+                    textEditor.write(text);
+                    break;
+                case 5:
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Pilihan tidak valid.");
+            }
+        }
     }
 }
